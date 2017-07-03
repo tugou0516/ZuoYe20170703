@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery教程_唯实讲堂_www.ForTen.org</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+</head>
+<body>
+<input id="t"/>
+<button id="sha1-btn" type="button">SHA1</button>
+<button id="md5-btn" type="button">MD5</button>
+<button id="base64-btn" type="button">BASE64</button>
+<div id="contents"></div>
+
+<script src="js/jquery-3.2.1.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/md5.js"></script>
+<script src="js/sha1.js"></script>
+<script src="js/base64.js"></script>
+<script>
+    $(function () {
+        $('#sha1-btn').click(function () {
+            var t = $('#t').val();
+            var content = hex_sha1(t);
+            $('#contents').html(content);
+        });
+        $('#md5-btn').click(function () {
+            var t = $('#t').val();
+            var content = hex_md5(t);
+            $('#contents').html(content);
+        });
+        $('#base64-btn').click(function () {
+            var t = $('#t').val();
+            var b = new Base64();
+            var str = b.encode(t);
+            $('#contents').html('<p>' + str + '</p>');
+            str = b.decode(str);
+            $('#contents').append('<p>' + str + '</p>');
+        });
+    });
+</script>
+</body>
+</html>

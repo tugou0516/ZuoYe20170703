@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ZuoYe20170703</title>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css"/>
+    <style type="text/css">
+        #add-btn{
+            margin-top: 50px;
+            margin-left: 20px;
+        }
+        #save-dialog{
+            background-color: rgba(55, 111, 222, 0.09);
+        }
+    </style>
+</head>
+<body>
+<button id="add-btn" type="button" class="btn btn-warning">添加学生信息</button>
+<div id="save-dialog" title="添加学生信息">
+    <form id="form01">
+        <div class="form-group">
+            <input class="form-control" id="name" name="name" placeholder="学生姓名"/>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2">
+                <input id="gender1" name="gender" value="M" type="radio"/>男
+            </label>
+            <label class="col-lg-2">
+                <input id="gender2" name="gender" value="F" type="radio"/>女
+            </label>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="birthday" name="birthday" type="date"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="idCardNum" name="idCardNum" placeholder="身份证号"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="tel" name="tel" placeholder="电话"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="email" name="email" placeholder="Email"/>
+        </div>
+        <div class="form-group">
+            <select class="form-control" id="eduBg" name="eduBg">
+            <option value="无学历">无学历</option>
+            <option value="小学">小学</option>
+            <option value="初中">初中</option>
+            <option value="中专">中专</option>
+            <option value="高中">高中</option>
+            <option value="大专">大专</option>
+            <option value="本科">本科</option>
+            <option value="研究生">研究生</option>
+        </select>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="address" name="address" placeholder="地址"/>
+        </div>
+    </form>
+</div>
+
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/bootstrap.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/sha1.js"></script>
+<script src="../js/commons.js"></script>
+<script>
+    $(function () {
+        $('#add-btn').on('click', function () {
+            saveDialog.dialog('open');
+        });
+    });
+
+    var saveDialog = $('#save-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 550,
+        width: 400,
+        buttons: [
+            {
+                text: "保存",
+                click: function () {
+                    var dataJson = $('#form01').form2Json();
+                    $.ajax({
+                        url:"save.do",
+                        type:"POST",
+                        contentType:"application/json",
+                        dataType:"json",
+                        data:dataJson
+                    }).then(function (msg) {
+                        alert(msg.msg);
+                        $('#form01')[0].reset();
+                        $('#save-dialog').dialog('close');
+                    },function (jqXhr,status,errorMsg) {
+                        alert(msg.msg);
+                    });
+                }
+            },
+            {
+                text:"关闭",
+                click:function () {
+                    $('#form01')[0].reset();
+                    $('#save-dialog').dialog('close');
+                }
+            }
+        ]
+    });
+</script>
+</body>
+</html>
