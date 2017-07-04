@@ -206,8 +206,9 @@
                 $('tfoot').show();
                 $.each(ro.list, function (index, stu) {
                     $('tbody').append(
-                        "<tr><th><input type='checkbox' value='" + stu.id + "' />"+
-                        "</th><td>" + stu.name +
+                        "<tr><th><input type='checkbox' value='" + stu.id + "' />" +
+                        "</th><td>"+ stu.id +
+                        "</td><td>" + stu.name +
                         "</td><td>" + stu.gender +
                         "</td><td>" + stu.idCardNum +
                         "</td><td>" + stu.email +
