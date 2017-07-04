@@ -6,17 +6,70 @@
     <link rel="stylesheet" href="../css/bootstrap.css"/>
     <link rel="stylesheet" href="../css/jquery-ui.css"/>
     <style type="text/css">
-        #add-btn{
+        #add-btn {
             margin-top: 50px;
             margin-left: 20px;
         }
-        #save-dialog{
+
+        #save-dialog {
             background-color: rgba(55, 111, 222, 0.09);
         }
     </style>
 </head>
 <body>
 <button id="add-btn" type="button" class="btn btn-warning">添加学生信息</button>
+<div class="container">
+    <div class="row">
+        <form id="search-form">
+            <input name="name" placeholder="输入要查询的姓名关键字">
+            <button id="search-btn" type="button">查询</button>
+        </form>
+    </div>
+    <tr id="list-div">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><input id="allCheck" type='checkbox'/></th>
+                <th>ID</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>身份证号</th>
+                <th>Email</th>
+                <th>电话</th>
+                <th>地址</th>
+                <th>生日</th>
+                <th>学历</th>
+                <th>状态</th>
+                <th>注册时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td class="text-right" colspan="11">
+                    <button id="first-page-btn" type="button">首页</button>
+                    <button id="former-page-btn" type="button">上一页</button>
+                    <span id="page-span"></span>
+                    <button id="next-page-btn" type="button">下一页</button>
+                    <button id="last-page-btn" type="button">尾页</button>
+                    <span>跳转页码：
+                        <input id="pageNo" name="pageNo" value="1" form="search-form"/>
+                    </span>
+                    <span>每页显示数量：
+                        <select id="pageSize" name="pageSize" form="search-form">
+                            <option value="5" selected>5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                        </select>
+                    </span>
+                    <button id="go-btn" type="button">GO</button>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+</div>
+</div>
 <div id="save-dialog" title="添加学生信息">
     <form id="form01">
         <div class="form-group">
@@ -44,15 +97,15 @@
         </div>
         <div class="form-group">
             <select class="form-control" id="eduBg" name="eduBg">
-            <option value="无学历">无学历</option>
-            <option value="小学">小学</option>
-            <option value="初中">初中</option>
-            <option value="中专">中专</option>
-            <option value="高中">高中</option>
-            <option value="大专">大专</option>
-            <option value="本科">本科</option>
-            <option value="研究生">研究生</option>
-        </select>
+                <option value="无学历">无学历</option>
+                <option value="小学">小学</option>
+                <option value="初中">初中</option>
+                <option value="中专">中专</option>
+                <option value="高中">高中</option>
+                <option value="大专">大专</option>
+                <option value="本科">本科</option>
+                <option value="研究生">研究生</option>
+            </select>
         </div>
         <div class="form-group">
             <input class="form-control" id="address" name="address" placeholder="地址"/>
@@ -66,9 +119,36 @@
 <script src="../js/sha1.js"></script>
 <script src="../js/commons.js"></script>
 <script>
+    var totalPage = 0;
     $(function () {
+        showList();
         $('#add-btn').on('click', function () {
             saveDialog.dialog('open');
+        });
+        $('#search-btn').add('#go-btn').on('click', showList);
+        $('#first-page-btn').on('click', function () {
+            $('#pageNo').val(1);
+            showList();
+        });
+        $('#last-page-btn').on('click', function () {
+            $('#pageNo').val(totalPage);
+            showList();
+        });
+        $('#former-page-btn').on('click', function () {
+            var input = $('#pageNo');
+            var pageNum = parseInt(input.val()) - 1;
+            if (pageNum > 0) {
+                input.val(pageNum);
+            }
+            showList();
+        });
+        $('#next-page-btn').on('click', function () {
+            var input = $('#pageNo');
+            var pageNum = parseInt(input.val()) + 1;
+            if (pageNum <= totalPage) {
+                input.val(pageNum);
+            }
+            showList();
         });
     });
 
@@ -83,29 +163,86 @@
                 click: function () {
                     var dataJson = $('#form01').form2Json();
                     $.ajax({
-                        url:"save.do",
-                        type:"POST",
-                        contentType:"application/json",
-                        dataType:"json",
-                        data:dataJson
+                        url: "save.do",
+                        type: "POST",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: dataJson
                     }).then(function (msg) {
                         alert(msg.msg);
                         $('#form01')[0].reset();
                         $('#save-dialog').dialog('close');
-                    },function (jqXhr,status,errorMsg) {
+                        $('#search-form')[0].reset();
+                        $('tbody').empty();
+                        showList();
+                    }, function (jqXhr, status, errorMsg) {
                         alert(msg.msg);
                     });
                 }
             },
             {
-                text:"关闭",
-                click:function () {
+                text: "关闭",
+                click: function () {
                     $('#form01')[0].reset();
                     $('#save-dialog').dialog('close');
                 }
             }
         ]
     });
+    var showList = function () {
+        var formJson = $('#search-form').form2Json();
+        $('tbody').empty();
+        $.ajax({
+            url: 'list.do',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: formJson
+        }).then(function (ro) {
+            if (ro.emptyData) {
+                alert("未查询到符合条件的数据");
+                $('tfoot').hide();
+            } else {
+                $('tfoot').show();
+                $.each(ro.list, function (index, stu) {
+                    $('tbody').append(
+                        "<tr><th><input type='checkbox' value='" + stu.id + "' />"+
+                        "</th><td>" + stu.name +
+                        "</td><td>" + stu.gender +
+                        "</td><td>" + stu.idCardNum +
+                        "</td><td>" + stu.email +
+                        "</td><td>" + stu.tel +
+                        "</td><td>" + stu.address +
+                        "</td><td>" + stu.birthday +
+                        "</td><td>" + stu.eduBg +
+                        "</td><td>" + stu.status +
+                        "</td><td>" + stu.registTimeStr +
+                        "</td></tr>");
+                });
+                totalPage = ro.page.totalPage;
+                $('#page-span').text("第" + ro.page.pageNo + "/" + ro.page.totalPage + "页  第" + (ro.page.firstResultNum + 1) + "~" + ro.page.lastResultNum + "/" + ro.page.totalQuantity + "条");
+                if (ro.page.pageNo.firstPage) {
+                    $('#first-page-btn').attr("disabled","disabled");
+                    $('#former-page-btn').attr("disabled","disabled");
+                    $('#next-page-btn').removeAttr("disabled");
+                    $('#last-page-btn').removeAttr("disabled");
+                }
+                if (ro.page.pageNo.lastPage) {
+                    $('#next-page-btn').attr("disabled","disabled");
+                    $('#last-page-btn').attr("disabled","disabled");
+                    $('#first-page-btn').removeAttr("disabled");
+                    $('#former-page-btn').removeAttr("disabled");
+                } else {
+                    $('#first-page-btn').removeAttr("disabled");
+                    $('#former-page-btn').removeAttr("disabled");
+                    $('#next-page-btn').removeAttr("disabled");
+                    $('#last-page-btn').removeAttr("disabled");
+                }
+            }
+        }, function (xhr, status, errorMsg) {
+            alert(xhr.status);
+        });
+    };
 </script>
 </body>
 </html>

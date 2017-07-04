@@ -1,16 +1,18 @@
 package org.forten.si.dao;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.stereotype.Repository;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
+import org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean;
 
 @Repository("hibernateDao")
 public class HibernateDao {
@@ -19,7 +21,7 @@ public class HibernateDao {
 
 	/**
 	 * 从当前线程上获取Hibernate的Session
-	 * 
+	 *
 	 * @return Session
 	 */
 	public Session getSession() {
@@ -28,7 +30,7 @@ public class HibernateDao {
 
 	/**
 	 * 持久化对象到数据库中
-	 * 
+	 *
 	 * @param entity
 	 *            要被持久化的对象
 	 */
@@ -38,7 +40,7 @@ public class HibernateDao {
 
 	/**
 	 * 更新对象到数据库中
-	 * 
+	 *
 	 * @param entity
 	 *            要被更新的对象
 	 */
@@ -48,7 +50,7 @@ public class HibernateDao {
 
 	/**
 	 * 保存或更新对象到数据库中
-	 * 
+	 *
 	 * @param entity
 	 *            要被保存或更新的对象
 	 */
@@ -58,7 +60,7 @@ public class HibernateDao {
 
 	/**
 	 * 从数据库中删除对象
-	 * 
+	 *
 	 * @param entity
 	 *            要被删除的对象
 	 */
@@ -68,7 +70,7 @@ public class HibernateDao {
 
 	/**
 	 * 从数据库中删除对象
-	 * 
+	 *
 	 * @param id
 	 *            要被删除对象的id
 	 * @param clazz
@@ -84,7 +86,7 @@ public class HibernateDao {
 
 	/**
 	 * 按照id延迟查询对象
-	 * 
+	 *
 	 * @param id
 	 *            对象的id
 	 * @param clazz
@@ -97,7 +99,7 @@ public class HibernateDao {
 
 	/**
 	 * 按照id即时查询对象
-	 * 
+	 *
 	 * @param id
 	 *            对象的id
 	 * @param clazz
@@ -110,7 +112,7 @@ public class HibernateDao {
 
 	/**
 	 * 通过hql和参数Map来进行条件查询
-	 * 
+	 *
 	 * @param hql
 	 *            HQL语句
 	 * @param params
@@ -128,7 +130,7 @@ public class HibernateDao {
 
 	/**
 	 * 通过hql和参数Map来进行分页条件查询
-	 * 
+	 *
 	 * @param hql
 	 *            HQL语句
 	 * @param params

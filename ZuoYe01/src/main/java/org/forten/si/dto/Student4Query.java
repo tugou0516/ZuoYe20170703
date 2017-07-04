@@ -1,15 +1,14 @@
-package org.forten.si.org.forten.si.dto;
+package org.forten.si.dto;
 
-import org.forten.utils.security.SHA1Util;
-import org.forten.utils.system.Assert;
+import org.forten.utils.common.DateUtil;
 
-import javax.persistence.Column;
 import java.util.Date;
 
 /**
- * Created by student1 on 2017/7/3.
+ * Created by student1 on 2017/7/4.
  */
-public class Student4Save {
+public class Student4Query {
+    private int id;
     private String name;
     private String gender;
     private String idCardNum;
@@ -18,11 +17,14 @@ public class Student4Save {
     private String address;
     private Date birthday;
     private String eduBg;
+    private String status;
+    private Date registTime;
 
-    public Student4Save() {
+    public Student4Query() {
     }
 
-    public Student4Save(String name, String gender, String idCardNum, String email, String tel, String address, Date birthday, String eduBg) {
+    public Student4Query(int id, String name, String gender, String idCardNum, String email, String tel, String address, Date birthday, String eduBg, String status, Date registTime) {
+        this.id = id;
         this.name = name;
         this.gender = gender;
         this.idCardNum = idCardNum;
@@ -31,11 +33,20 @@ public class Student4Save {
         this.address = address;
         this.birthday = birthday;
         this.eduBg = eduBg;
+        this.status = status;
+        this.registTime = registTime;
+    }
+    public String getRegistTimeStr(){
+        String str = DateUtil.convertDateToString(registTime);
+        return str;
     }
 
-    public String getPassword(){
-        Assert.hasText(this.idCardNum,"证件号不可为空");
-        return SHA1Util.encryptSHA(this.idCardNum.substring(idCardNum.length()-6));
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -102,13 +113,30 @@ public class Student4Save {
         this.eduBg = eduBg;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getRegistTime() {
+        return registTime;
+    }
+
+    public void setRegistTime(Date registTime) {
+        this.registTime = registTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Student4Save that = (Student4Save) o;
+        Student4Query that = (Student4Query) o;
 
+        if (id != that.id) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (gender != null ? !gender.equals(that.gender) : that.gender != null) return false;
         if (idCardNum != null ? !idCardNum.equals(that.idCardNum) : that.idCardNum != null) return false;
@@ -116,12 +144,15 @@ public class Student4Save {
         if (tel != null ? !tel.equals(that.tel) : that.tel != null) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
         if (birthday != null ? !birthday.equals(that.birthday) : that.birthday != null) return false;
-        return eduBg != null ? eduBg.equals(that.eduBg) : that.eduBg == null;
+        if (eduBg != null ? !eduBg.equals(that.eduBg) : that.eduBg != null) return false;
+        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        return registTime != null ? registTime.equals(that.registTime) : that.registTime == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (idCardNum != null ? idCardNum.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
@@ -129,13 +160,16 @@ public class Student4Save {
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
         result = 31 * result + (eduBg != null ? eduBg.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (registTime != null ? registTime.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "Student4Save{" +
-                "name='" + name + '\'' +
+        return "Student4Query{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", idCardNum='" + idCardNum + '\'' +
                 ", email='" + email + '\'' +
@@ -143,6 +177,8 @@ public class Student4Save {
                 ", address='" + address + '\'' +
                 ", birthday=" + birthday +
                 ", eduBg='" + eduBg + '\'' +
+                ", status='" + status + '\'' +
+                ", registTime=" + registTime +
                 '}';
     }
 }
