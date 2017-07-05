@@ -1,17 +1,15 @@
 package org.forten.si.action;
 
 import org.forten.si.bo.StudentBo;
-import org.forten.si.dao.Message;
-import org.forten.si.dto.RoWithPages;
-import org.forten.si.dto.Student4Query;
-import org.forten.si.dto.Student4Save;
-import org.forten.si.dto.StudentQo;
+import org.forten.si.dto.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.awt.*;
+import java.util.Arrays;
 
 /**
  * Created by student1 on 2017/7/3.
@@ -36,5 +34,23 @@ public class AdminAction {
     @RequestMapping("list")
     public @ResponseBody RoWithPages<Student4Query> queryList(@RequestBody StudentQo qo){
         return bo.queryBy(qo);
+    }
+
+    @RequestMapping("delete")
+    public @ResponseBody Message deleteStu(@RequestBody Integer... ids){
+        System.out.println(Arrays.toString(ids));
+        return bo.doDelete(ids);
+    }
+
+    @RequestMapping("changeStatus")
+    public @ResponseBody Message changeStatus(@RequestBody Object[] map){
+        //TODO
+        return new Message("");
+    }
+
+    @RequestMapping("userInfo")
+    public @ResponseBody
+    Student4User showUserInfo(@RequestBody int id){
+        return bo.showUserInfo(id);
     }
 }

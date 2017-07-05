@@ -1,11 +1,8 @@
 package org.forten.si.bo;
 
 import org.forten.si.dao.HibernateDao;
+import org.forten.si.dto.*;
 import org.forten.si.entity.Student;
-import org.forten.si.dto.RoWithPages;
-import org.forten.si.dto.Student4Query;
-import org.forten.si.dto.Student4Save;
-import org.forten.si.dto.StudentQo;
 import org.forten.utils.common.StringUtil;
 import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.PageInfo;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,5 +50,39 @@ public class StudentBo {
         PageInfo page = PageInfo.getInstance(qo.getPageNo(),qo.getPageSize(),count);
         List<Student4Query> list = dao.findBy(hql, map, (int)page.getFirstResultNum(), page.getPageSize());
         return new RoWithPages<>(list,page);
+    }
+
+    @Transactional
+    public Message doDelete(Integer... ids){
+        String hql = "DELETE FROM Student WHERE id IN (:ids) ";
+        Map<String,Object> map = new HashMap<>();
+        map.put("ids", Arrays.asList(ids));
+        try{
+            int n = dao.executeUpdate(hql,map);
+            return new Message("成功删除"+n+"条数据");
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Message("删除操作失败");
+        }
+    }
+
+    @Transactional
+    public Message changeStatus(int id, String status){
+        String hql = "UPDATE Student SET status= :status WHERE id= :id ";
+        Map<String,Object> map = new HashMap<>();
+        map.put("status",status);
+        map.put("id",id);
+        try{
+            dao.executeUpdate(hql,map);
+            return new Message("状态修改为："+status);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Message("状态修改失败");
+        }
+    }
+
+    @Transactional
+    public Student4User showUserInfo(int id){
+        return dao.getById(id,Student4User.class);
     }
 }

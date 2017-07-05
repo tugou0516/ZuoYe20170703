@@ -3,14 +3,16 @@ package org.forten.si.dto;
 import org.forten.utils.common.DateUtil;
 import org.forten.utils.common.StringUtil;
 
+import javax.persistence.Column;
 import java.util.Date;
 
 /**
- * Created by student1 on 2017/7/4.
+ * Created by student1 on 2017/7/5.
  */
-public class Student4Query {
+public class Student4User {
     private int id;
     private String name;
+    private String password;
     private String gender;
     private String idCardNum;
     private String email;
@@ -21,22 +23,9 @@ public class Student4Query {
     private String status;
     private Date registTime;
 
-    public Student4Query() {
+    public Student4User() {
     }
 
-    public Student4Query(int id, String name, String gender, String idCardNum, String email, String tel, String address, Date birthday, String eduBg, String status, Date registTime) {
-        this.id = id;
-        this.name = name;
-        this.gender = gender;
-        this.idCardNum = idCardNum;
-        this.email = email;
-        this.tel = tel;
-        this.address = address;
-        this.birthday = birthday;
-        this.eduBg = eduBg;
-        this.status = status;
-        this.registTime = registTime;
-    }
     public String getRegistTimeStr(){
         String str = DateUtil.convertDateToString(registTime);
         return str;
@@ -45,82 +34,6 @@ public class Student4Query {
     public String getBirthdayStr(){
         String str = DateUtil.convertDateToString(birthday,"yyyy-MM-dd");
         return str;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getIdCardNum() {
-        return idCardNum;
-    }
-
-    public void setIdCardNum(String idCardNum) {
-        this.idCardNum = idCardNum;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTel() {
-        return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public String getEduBg() {
-        return eduBg;
-    }
-
-    public void setEduBg(String eduBg) {
-        this.eduBg = eduBg;
-    }
-
-    public String getStatus(){
-        return status;
     }
 
     public String getStatusDes() {
@@ -146,16 +59,88 @@ public class Student4Query {
         }
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getIdCardNum() {
+        return idCardNum;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public String getEduBg() {
+        return eduBg;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public Date getRegistTime() {
         return registTime;
     }
 
-    public void setRegistTime(Date registTime) {
-        this.registTime = registTime;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setIdCardNum(String idCardNum) {
+        this.idCardNum = idCardNum;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public void setEduBg(String eduBg) {
+        this.eduBg = eduBg;
     }
 
     @Override
@@ -163,10 +148,11 @@ public class Student4Query {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Student4Query that = (Student4Query) o;
+        Student4User that = (Student4User) o;
 
         if (id != that.id) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (gender != null ? !gender.equals(that.gender) : that.gender != null) return false;
         if (idCardNum != null ? !idCardNum.equals(that.idCardNum) : that.idCardNum != null) return false;
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
@@ -182,6 +168,7 @@ public class Student4Query {
     public int hashCode() {
         int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (idCardNum != null ? idCardNum.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
@@ -196,9 +183,10 @@ public class Student4Query {
 
     @Override
     public String toString() {
-        return "Student4Query{" +
+        return "Student4User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
                 ", gender='" + gender + '\'' +
                 ", idCardNum='" + idCardNum + '\'' +
                 ", email='" + email + '\'' +

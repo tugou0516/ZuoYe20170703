@@ -6,9 +6,14 @@
     <link rel="stylesheet" href="../css/bootstrap.css"/>
     <link rel="stylesheet" href="../css/jquery-ui.css"/>
     <style type="text/css">
-        #add-btn {
+        .action-btn {
             margin-top: 50px;
             margin-left: 20px;
+        }
+
+        #search-div{
+            margin-top: 50px;
+            margin-left: 5px;
         }
 
         #save-dialog {
@@ -17,9 +22,10 @@
     </style>
 </head>
 <body>
-<button id="add-btn" type="button" class="btn btn-warning">添加学生信息</button>
+<button id="add-btn" type="button" class="btn btn-warning action-btn">添加学生信息</button>
+<button id="del-btn" type="button" class="btn btn-danger action-btn">删除学生信息</button>
 <div class="container">
-    <div class="row">
+    <div id="search-div" class="row">
         <form id="search-form">
             <input name="name" placeholder="输入要查询的姓名关键字">
             <button id="search-btn" type="button">查询</button>
@@ -151,6 +157,65 @@
             showList();
         });
     });
+    $('#allCheck').on('change',function () {
+        $('.checkStu').prop('checked',$(this).prop('checked'));
+    });
+    $('#del-btn').on('click',function () {
+        var cf = function confirmDel() {
+            return confirm("删除选中的学生信息？");
+        };
+        if(cf){
+            var checkedStus = $('.checkStu:checked');
+            var ids = [];
+            $.each(checkedStus,function (index,element) {
+                ids[index] = parseInt($(element).val());
+            });
+            var dataJson = JSON.stringify(ids);
+            $.ajax({
+                url:'delete.do',
+                type:'POST',
+                dataType:'json',
+                contentType:'application/json',
+                data:dataJson
+            }).then(function (msg) {
+                alert(msg.msg);
+                showList();
+            },function (xhr,status,errorMsg) {
+                alert(xhr.status);
+            });
+        }else {
+            return;
+        }
+    });
+    $('tbody').on('dblclick','.stuStatus',function () {
+        var statusValue = $(this).data('status');
+        $(this).html(
+            "<select id='slct' name='status'>" +
+            "<option value='BM'>报名</option>" +
+            "<option value='SK'>上课</option>" +
+            "<option value='BY'>毕业</option>" +
+            "<option value='XX'>休学</option>" +
+            "<option value='TX'>退学</option>" +
+            "<option value='CX'>重修</option>" +
+            "</select>"
+        );
+        $('#slct').val(statusValue);
+    });
+
+    $('tbody').on('blur','.stuStatus',function () {
+        var status = $('#slct').val();
+        var str = $('#slct>option:selected').text();
+        $(this).html(str);
+        $(this).data('status',status);
+        var id = parseInt($(this).parent().children('td').first().text());
+        var map = [id,status];
+        alert(map[0]);
+        alert(map[1]);
+        alert(typeof map);
+        alert(typeof map[0]);
+        alert(typeof map[1]);
+        //TODO
+    });
 
     var saveDialog = $('#save-dialog').dialog({
         autoOpen: false,
@@ -206,7 +271,7 @@
                 $('tfoot').show();
                 $.each(ro.list, function (index, stu) {
                     $('tbody').append(
-                        "<tr><th><input type='checkbox' value='" + stu.id + "' />" +
+                        "<tr><th><input type='checkbox' class='checkStu' value='" + stu.id + "' />" +
                         "</th><td>"+ stu.id +
                         "</td><td>" + stu.name +
                         "</td><td>" + stu.gender +
@@ -214,31 +279,14 @@
                         "</td><td>" + stu.email +
                         "</td><td>" + stu.tel +
                         "</td><td>" + stu.address +
-                        "</td><td>" + stu.birthday +
+                        "</td><td>" + stu.birthdayStr +
                         "</td><td>" + stu.eduBg +
-                        "</td><td>" + stu.status +
+                        "</td><td class='stuStatus' data-status='"+stu.status+"'>" + stu.statusDes +
                         "</td><td>" + stu.registTimeStr +
                         "</td></tr>");
                 });
                 totalPage = ro.page.totalPage;
                 $('#page-span').text("第" + ro.page.pageNo + "/" + ro.page.totalPage + "页  第" + (ro.page.firstResultNum + 1) + "~" + ro.page.lastResultNum + "/" + ro.page.totalQuantity + "条");
-                if (ro.page.pageNo.firstPage) {
-                    $('#first-page-btn').attr("disabled","disabled");
-                    $('#former-page-btn').attr("disabled","disabled");
-                    $('#next-page-btn').removeAttr("disabled");
-                    $('#last-page-btn').removeAttr("disabled");
-                }
-                if (ro.page.pageNo.lastPage) {
-                    $('#next-page-btn').attr("disabled","disabled");
-                    $('#last-page-btn').attr("disabled","disabled");
-                    $('#first-page-btn').removeAttr("disabled");
-                    $('#former-page-btn').removeAttr("disabled");
-                } else {
-                    $('#first-page-btn').removeAttr("disabled");
-                    $('#former-page-btn').removeAttr("disabled");
-                    $('#next-page-btn').removeAttr("disabled");
-                    $('#last-page-btn').removeAttr("disabled");
-                }
             }
         }, function (xhr, status, errorMsg) {
             alert(xhr.status);

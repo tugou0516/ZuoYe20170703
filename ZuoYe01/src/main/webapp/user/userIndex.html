@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ZuoYe20170705</title>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css"/>
+</head>
+<body>
+<button id="logOut-btn" type="button" class="btn btn-warning">登出</button>
+<button id="update-btn" type="button" class="btn btn-success">修改个人信息</button>
+<button id="changePw-btn" type="button" class="btn btn-success">修改密码</button>
+<div id="update-dialog" title="修改个人信息">
+    <form id="form01">
+        <div class="form-group">
+            <input id="name" name="name" placeholder="姓名">
+        </div>
+        <div class="form-group">
+            <input class="gender" name="gender" type="radio" value="M">男
+            <input class="gender" name="gender" type="radio" value="F">女
+        </div>
+        <div class="form-group">
+            <input id="idCardNum" name="idCardNum" placeholder="身份证号">
+        </div>
+        <div class="form-group">
+            <input id="email" name="email" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <input id="tel" name="tel" placeholder="电话">
+        </div>
+        <div class="form-group">
+            <input id="address" name="address" placeholder="地址">
+        </div>
+        <div class="form-group">
+            <input id="birthday" name="birthday" type="date">
+        </div>
+        <div class="form-group">
+            <select id="eduBg" name="eduBg" class="form-control">
+                <option value="无学历">无学历</option>
+                <option value="小学">小学</option>
+                <option value="初中">初中</option>
+                <option value="高中">高中</option>
+                <option value="中专">中专</option>
+                <option value="大专">大专</option>
+                <option value="本科">本科</option>
+                <option value="研究生">研究生</option>
+            </select>
+        </div>
+
+    </form>
+</div>
+<div class="container">
+    <table id="userInfo-table" class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>姓名</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>性别</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>身份证号</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>电话</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>地址</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>生日</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>学历</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>状态</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>注册时间</th>
+                <td></td>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/bootstrap.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/sha1.js"></script>
+<script src="../js/commons.js"></script>
+<script>
+    var tds = $('td');
+    $(function () {
+        //showInfo();
+        $('#update-btn').click(function () {
+            $('#form01')[0].reset();
+            updateDlg.dialog('open');
+        });
+        $('#name').text(tds[1].text());
+        if(tds[2].text()=="男"){
+            $('#gender1').checked();
+        }else if(tds[2].text()=="女"){
+            $('#gender2').checked();
+        }
+        $('#idCardNum').text(tds[3].text());
+        $('#email').text(tds[4].text());
+        $('#tel').text(tds[5].text());
+        $('#address').text(tds[6].text());
+        $('#birthday').val(tds[7].text());
+        $('#eduBg').val(tds[8].text());
+    });
+
+    var updateDlg = $('#update-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 500,
+        width: 450,
+        buttons:[
+            {
+                text: "提交",
+                click: function () {
+                    var dataJson = $('#form01').form2Json();
+                    $.ajax({
+                        url: "save.do",
+                        type: "POST",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: dataJson
+                    }).then(function (msg) {
+                        alert(msg.msg);
+                        $('#form01')[0].reset();
+                        //showList();
+                    }, function (jqXhr, status, errorMsg) {
+                        alert(msg.msg);
+                    });
+                }
+            },
+            {
+                text: "取消",
+                click: function () {
+                    $(this).dialog('close');
+                }
+            }
+        ]
+    });
+    var showInfo = function () {
+        var dataJson = JSON.stringify(1);
+        $('td').empty();
+        $.ajax({
+            url:'userInfo.do',
+            type:'POST',
+            dataType:'json',
+            contentType:'application/json',
+            data:dataJson
+        }).then(function (stu) {
+            tds[0].text(stu.id);
+            tds[1].text(stu.name);
+            tds[2].text(stu.gender);
+            tds[3].text(stu.idCardNum);
+            tds[4].text(stu.email);
+            tds[5].text(stu.tel);
+            tds[6].text(stu.address);
+            tds[7].text(stu.birthdayStr);
+            tds[8].text(stu.eduBg);
+            tds[9].text(stu.statusDes);
+            tds[10].text(stu.registTimeStr);
+
+        },function (xhr,status,errorMsg) {
+            alert(xhr.status);
+        });
+    };
+
+</script>
+</body>
+</html>

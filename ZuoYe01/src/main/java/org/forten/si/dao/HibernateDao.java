@@ -164,4 +164,12 @@ public class HibernateDao {
 			return null;
 		}
 	}
+
+	public int executeUpdate(String hql,Map<String,Object> params){
+		Query query = getSession().createQuery(hql);
+		for (Entry<String, Object> kv : params.entrySet()) {
+			query.setParameter(kv.getKey(), kv.getValue());
+		}
+		return query.executeUpdate();
+	}
 }
