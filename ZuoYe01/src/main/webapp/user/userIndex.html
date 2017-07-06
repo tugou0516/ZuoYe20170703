@@ -9,7 +9,7 @@
 <body>
 <button id="logOut-btn" type="button" class="btn btn-warning">登出</button>
 <button id="update-btn" type="button" class="btn btn-success">修改个人信息</button>
-<button id="changePw-btn" type="button" class="btn btn-success">修改密码</button>
+<button id="changePwd-btn" type="button" class="btn btn-success">修改密码</button>
 <div id="update-dialog" title="修改个人信息">
     <form id="form01">
         <div class="form-group">
@@ -46,7 +46,19 @@
                 <option value="研究生">研究生</option>
             </select>
         </div>
-
+    </form>
+</div>
+<div id="changePwd-dialog" title="修改密码">
+    <form id="form02">
+        <div class="form-group">
+            <input id="oldPwd" name="oldPwd" placeholder="原密码">
+        </div>
+        <div class="form-group">
+            <input id="newPwd1" name="newPwd" placeholder="新密码">
+        </div>
+        <div class="form-group">
+            <input id="newPwd2" name="newPwd" placeholder="确认新密码">
+        </div>
     </form>
 </div>
 <div class="container">
@@ -106,25 +118,67 @@
 <script src="../js/sha1.js"></script>
 <script src="../js/commons.js"></script>
 <script>
-    var tds = $('td');
+    var tds = $('td','#userInfo-table');
     $(function () {
-        //showInfo();
+        showInfo();
         $('#update-btn').click(function () {
             $('#form01')[0].reset();
             updateDlg.dialog('open');
+            $('#name').val($(tds[1]).text());
+            if($(tds[2]).text()=="男"){
+                $('#gender1').attr('checked',true);
+            }else if($(tds[2]).text()=="女"){
+                $('#gender2').attr('checked',true);
+            }
+            $('#idCardNum').val($(tds[3]).text());
+            $('#email').val($(tds[4]).text());
+            $('#tel').val($(tds[5]).text());
+            $('#address').val($(tds[6]).text());
+            $('#birthday').val($(tds[7]).text());
+            $('#eduBg').val($(tds[8]).text());
         });
-        $('#name').text(tds[1].text());
-        if(tds[2].text()=="男"){
-            $('#gender1').checked();
-        }else if(tds[2].text()=="女"){
-            $('#gender2').checked();
-        }
-        $('#idCardNum').text(tds[3].text());
-        $('#email').text(tds[4].text());
-        $('#tel').text(tds[5].text());
-        $('#address').text(tds[6].text());
-        $('#birthday').val(tds[7].text());
-        $('#eduBg').val(tds[8].text());
+        $('#changePwd-btn').click(function () {
+            $('#form02')[0].reset();
+            changePwdDlg.dialog('open');
+        });
+    });
+    var changePwdDlg = $('#changePwd-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 400,
+        width: 450,
+        buttons:[
+            {
+                text: "提交",
+                click:function () {
+                    var oldP = hex_sha1($('#oldPwd').val());
+                    var newP1 = hex_sha1($('#newPwd1').val());
+                    var newP2 = hex_sha1($('#newPwd2').val());
+                    if(newP1!=newP2){
+                        alert("两次输入的新密码不一致！");
+                        return;
+                    }
+                    $.ajax({
+                        url: "changePwd.do?oldPwd="+oldP+"&newPwd="+newP2,
+                        type: "GET",
+                    }).then(function (msg) {
+                        alert(msg.msg);
+                        $('#form02')[0].reset();
+                        $(this).dialog('close');
+                        showInfo();
+                    },function (xhr, status, errorMsg) {
+                        alert(xhr.status);
+                        $(this).dialog('close');
+                    });
+                }
+            },
+            {
+                text: "取消",
+                click: function () {
+                    $(this).dialog('close');
+                }
+            }
+        ]
     });
 
     var updateDlg = $('#update-dialog').dialog({
@@ -138,7 +192,7 @@
                 click: function () {
                     var dataJson = $('#form01').form2Json();
                     $.ajax({
-                        url: "save.do",
+                        url: "update.do",
                         type: "POST",
                         contentType: "application/json",
                         dataType: "json",
@@ -146,9 +200,11 @@
                     }).then(function (msg) {
                         alert(msg.msg);
                         $('#form01')[0].reset();
-                        //showList();
+                        $(this).dialog('close');
+                        showInfo();
                     }, function (jqXhr, status, errorMsg) {
                         alert(msg.msg);
+                        $(this).dialog('close');
                     });
                 }
             },
@@ -161,32 +217,30 @@
         ]
     });
     var showInfo = function () {
-        var dataJson = JSON.stringify(1);
-        $('td').empty();
         $.ajax({
             url:'userInfo.do',
-            type:'POST',
-            dataType:'json',
-            contentType:'application/json',
-            data:dataJson
+            type:'GET',
+            dataType:'json'
         }).then(function (stu) {
-            tds[0].text(stu.id);
-            tds[1].text(stu.name);
-            tds[2].text(stu.gender);
-            tds[3].text(stu.idCardNum);
-            tds[4].text(stu.email);
-            tds[5].text(stu.tel);
-            tds[6].text(stu.address);
-            tds[7].text(stu.birthdayStr);
-            tds[8].text(stu.eduBg);
-            tds[9].text(stu.statusDes);
-            tds[10].text(stu.registTimeStr);
+            $(tds[0]).text(stu.id);
+            $(tds[1]).text(stu.name);
+            $(tds[2]).text(stu.genderStr);
+            $(tds[3]).text(stu.idCardNum);
+            $(tds[4]).text(stu.email);
+            $(tds[5]).text(stu.tel);
+            $(tds[6]).text(stu.address);
+            $(tds[7]).text(stu.birthdayStr);
+            $(tds[8]).text(stu.eduBg);
+            $(tds[9]).text(stu.statusDes);
+            $(tds[10]).text(stu.registTimeStr);
 
         },function (xhr,status,errorMsg) {
-            alert(xhr.status);
+            alert(xhr.status+":"+xhr.responseText);
+            alert(errorMsg);
+
         });
     };
 
 </script>
 </body>
-</html>
+</html> 

@@ -48,9 +48,5 @@ public class AdminAction {
         return new Message("");
     }
 
-    @RequestMapping("userInfo")
-    public @ResponseBody
-    Student4User showUserInfo(@RequestBody int id){
-        return bo.showUserInfo(id);
-    }
+
 }

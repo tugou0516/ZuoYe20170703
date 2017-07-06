@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ForgetPassword_Zuoye20170705</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+</head>
+<body>
+<div class="container">
+    <form id="forget-form">
+        <div class="form-group">
+            <input id="name" name="name" placeholder="请输入用户名">
+        </div>
+        <div class="form-group">
+            <button id="submit-btn" type="button" class="btn btn-warning">提交</button>
+        </div>
+    </form>
+</div>
+<script src="js/jquery-3.2.1.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script>
+    $(function () {
+       $('#submit-btn').on('click',sendPwd);
+    });
+    var sendPwd = function () {
+        $.ajax({
+            url:'forgetPwd.do?name='+$('#name').val(),
+            dataType:'json'
+        }).then(function (msg) {
+            alert(msg.msg);
+        },function () {
+            alert("邮件发送失败，请重试");
+        });
+    }
+</script>
+</body>
+</html>

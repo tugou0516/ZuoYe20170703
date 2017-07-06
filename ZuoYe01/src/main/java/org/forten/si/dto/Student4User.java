@@ -12,7 +12,6 @@ import java.util.Date;
 public class Student4User {
     private int id;
     private String name;
-    private String password;
     private String gender;
     private String idCardNum;
     private String email;
@@ -26,8 +25,22 @@ public class Student4User {
     public Student4User() {
     }
 
+    public Student4User(int id, String name, String gender, String idCardNum, String email, String tel, String address, Date birthday, String eduBg, String status, Date registTime) {
+        this.id = id;
+        this.name = name;
+        this.gender = gender;
+        this.idCardNum = idCardNum;
+        this.email = email;
+        this.tel = tel;
+        this.address = address;
+        this.birthday = birthday;
+        this.eduBg = eduBg;
+        this.status = status;
+        this.registTime = registTime;
+    }
+
     public String getRegistTimeStr(){
-        String str = DateUtil.convertDateToString(registTime);
+        String str = DateUtil.convertDateToString(registTime,"yyyy-MM-dd HH:mm:ss");
         return str;
     }
 
@@ -67,12 +80,18 @@ public class Student4User {
         return name;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public String getGender() {
         return gender;
+    }
+
+    public String getGenderStr(){
+        if(gender.equals("M") || gender.equals("男")){
+            return "男";
+        }else if(gender.equals("F") || gender.equals("女")){
+            return "女";
+        }else {
+            return "未知";
+        }
     }
 
     public String getIdCardNum() {
@@ -111,10 +130,6 @@ public class Student4User {
         this.name = name;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public void setGender(String gender) {
         this.gender = gender;
     }
@@ -143,6 +158,18 @@ public class Student4User {
         this.eduBg = eduBg;
     }
 
+    public void setRegistTime(Date registTime) {
+        this.registTime = registTime;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -152,7 +179,6 @@ public class Student4User {
 
         if (id != that.id) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (gender != null ? !gender.equals(that.gender) : that.gender != null) return false;
         if (idCardNum != null ? !idCardNum.equals(that.idCardNum) : that.idCardNum != null) return false;
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
@@ -168,7 +194,6 @@ public class Student4User {
     public int hashCode() {
         int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (idCardNum != null ? idCardNum.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
@@ -186,7 +211,6 @@ public class Student4User {
         return "Student4User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
                 ", gender='" + gender + '\'' +
                 ", idCardNum='" + idCardNum + '\'' +
                 ", email='" + email + '\'' +

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index_Zuoye20170705</title>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="col-lg-6 col-lg-offset-3">
+        <form id="login-form" action="login.do" method="post">
+            <div class="form-group">
+                <input class="form-control" id="name" name="name" placeholder="用户名"/>
+            </div>
+            <div class="form-group">
+                <input class="form-control" id="password" name="password" type="password" placeholder="密码"/>
+            </div>
+            <div class="col-lg-4">
+                <button id="login-btn" class="btn btn-warning" type="submit">登录</button>
+            </div>
+            <div class="col-lg-4">
+                <a href="regist.html">新用户注册</a>
+            </div>
+            <div class="col-lg-4 text-right">
+                <a href="forgetpwd.html">忘记密码</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/bootstrap.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/sha1.js"></script>
+<script src="../js/commons.js"></script>
+<script>
+    $(function () {
+        $('#login-form').on('submit',function () {
+            var pwd = hex_sha1($('#password').val());
+            $('#password').val(pwd);
+        });
+    });
+</script>
+</body>
+</html>
