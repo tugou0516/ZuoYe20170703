@@ -1,11 +1,9 @@
 package org.forten.si.action;
 
-import com.mysql.cj.api.x.io.MessageWriter;
 import org.forten.si.bo.StudentBo;
-import org.forten.si.dto.LoginedUser;
-import org.forten.si.dto.Message;
-import org.forten.si.dto.Student4Update;
-import org.forten.si.dto.Student4User;
+import org.forten.si.dto.*;
+import org.forten.utils.common.DateUtil;
+import org.forten.utils.system.PropertiesFileReader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,14 +12,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 /**
  * Created by student1 on 2017/7/6.
  */
 @Controller
 @RequestMapping("/")
-@SessionAttributes({"logined"})
+@SessionAttributes({"logined","admin"})
 public class UserAction {
     @Resource
     private StudentBo bo;
@@ -55,6 +55,9 @@ public class UserAction {
 
     @RequestMapping("login")
     public String login(String name, String password, Model model){
+        if(name.equals("admin") && password.equals(PropertiesFileReader.getValue("system/admin","ADMIN_PWD"))){
+            //TODO
+        }
         LoginedUser stu = bo.login(name,password);
         if(stu == null){
             return "redirect:index.html";
@@ -67,6 +70,29 @@ public class UserAction {
     @RequestMapping("forgetPwd")
     public @ResponseBody Message forgetPwd(String name){
         return bo.forgetPwd(name);
+    }
+
+    @RequestMapping("regist")
+    public @ResponseBody Message regist(String name, String gender, String idCardNum, String email, String tel, String address, String birthday, String eduBg){
+        Date birthdayDate = DateUtil.convertStringToDate(birthday,"yyyy-MM-dd");
+        Student4Save stu4S = new Student4Save(name,gender,idCardNum,email,tel,address,birthdayDate,eduBg);
+        try {
+            bo.doSave(stu4S);
+            return new Message("注册成功！");
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Message("注册失败！");
+        }
+    }
+
+    @RequestMapping("checkEmail")
+    public boolean checkEmail(@RequestBody String email){
+        boolean result = bo.doCheckEmail(email);
+        if(result){
+            return false;
+        }else {
+            return true;
+        }
     }
 
 }

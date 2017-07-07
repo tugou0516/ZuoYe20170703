@@ -2,20 +2,39 @@ package org.forten.si.dto;
 
 import org.forten.utils.security.SHA1Util;
 import org.forten.utils.system.Assert;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 /**
  * Created by student1 on 2017/7/3.
  */
 public class Student4Save {
+    @NotBlank(message = "请输入姓名")
+    @Length(min=2,max=10,message = "请输入{min}到{max}个之间的字符")
     private String name;
+    @NotBlank(message = "请输入密码")
+    @Length(min=40,max=40,message = "密码长度有误")
     private String gender;
+    @NotBlank(message = "请输入身份证号")
+    @Pattern(regexp = "^[1-9]\\d{5}[1-2]\\d{3}((0[1-9])|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X|x)$",message = "请输入正确的18位身份证号")
     private String idCardNum;
+    @NotBlank(message = "请输入email")
+    @Email(message = "请输入正确的email格式")
     private String email;
+    @NotBlank(message = "请输入电话")
     private String tel;
+    @NotBlank(message = "请输入地址")
     private String address;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Past(message = "不可输入未来的日期")
     private Date birthday;
+    @NotBlank(message = "请选择学历")
     private String eduBg;
 
     public Student4Save() {

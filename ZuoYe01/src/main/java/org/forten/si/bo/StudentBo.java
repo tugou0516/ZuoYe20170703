@@ -12,6 +12,8 @@ import org.forten.utils.system.BeanPropertyUtil;
 import org.forten.utils.system.PageInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
@@ -178,6 +180,19 @@ public class StudentBo {
             }
         }).run();
         return new Message("系统已向"+stu4U.getEmail()+"发送新密码，请尽快查收并修改密码");
+    }
+
+    @Transactional
+    public boolean doCheckEmail(String email){
+        String hql = "SELECT count(id) FROM Student WHERE email=:email ";
+        Map<String,Object> map = new HashMap<>();
+        map.put("email",email);
+        int n = dao.findOneBy(hql,map);
+        if(n == 0){
+            return false;
+        }else {
+            return true;
+        }
     }
 
     private String getRandomStr(){

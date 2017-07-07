@@ -10,7 +10,7 @@
 <body>
 <div class="container">
     <div class="col-lg-6 col-lg-offset-3">
-        <form id="regist-form" action="regist.do" method="post">
+        <form id="regist-form">
             <div class="form-group">
                 <input class="form-control" id="name" name="name" placeholder="用户名"/>
             </div>
@@ -57,7 +57,7 @@
             </div>
 
             <div class="col-lg-6">
-                <button id="regist-btn" class="btn btn-warning" type="submit">注册</button>
+                <button id="regist-btn" class="btn btn-warning" type="button">注册</button>
             </div>
             <div class="col-lg-6">
                 <button id="reset-btn" class="btn btn-default" type="reset">重置</button>
@@ -110,7 +110,16 @@
                 },
                 email: {
                     required: true,
-                    emailCheck: true
+                    emailCheck: true,
+                    remote: {
+                        url:'checkEmail.do',
+                        type:'POST',
+                        data:{
+                            email:function(){
+                                return $('#email').val();
+                            }
+                        }
+                    }
                 },
                 address: {
                     required: true
@@ -147,7 +156,8 @@
                 },
                 email: {
                     required: '请输入email',
-                    emailCheck: '请输入正确的email格式'
+                    emailCheck: '请输入正确的email格式',
+                    remote:'该email已被注册'
                 },
                 address: {
                     required: '请输入地址'
@@ -167,9 +177,24 @@
                 $( element ).parents( ".row" ).removeClass( errorClass );
             }
         });
-        $('#regist-form').on('submit',function () {
-            var pwd = hex_sha1($('#password1').val());
-            $('#password1').val(pwd);
+
+        $('#regist-btn').on('click',function () {
+            if($('#regist-form').valid()){
+                var pwd = hex_sha1($('#password1').val());
+                $('#password1').val(pwd);
+                var dataJson = $('#regist-form').form2Json();
+                $.ajax({
+                    url:'regist.do',
+                    type:'POST',
+                    dataType:'json',
+                    contentType: "application/json",
+                    data: dataJson
+                }).then(function (msg) {
+                    alert(msg.msg);
+                },function (xhr,status,errorMsg) {
+                    alert(xhr.status);
+                });
+            }
         });
     });
 
