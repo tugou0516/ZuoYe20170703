@@ -4,6 +4,7 @@ import org.forten.si.bo.StudentBo;
 import org.forten.si.dto.*;
 import org.forten.utils.common.DateUtil;
 import org.forten.utils.system.PropertiesFileReader;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,15 +57,26 @@ public class UserAction {
     @RequestMapping("login")
     public String login(String name, String password, Model model){
         if(name.equals("admin") && password.equals(PropertiesFileReader.getValue("system/admin","ADMIN_PWD"))){
-            //TODO
-        }
-        LoginedUser stu = bo.login(name,password);
-        if(stu == null){
-            return "redirect:index.html";
+            LoginedUser stu = new LoginedUser(0,"admin");
+            model.addAttribute("logined", stu);
+            model.addAttribute("admin",true);
+            return "redirect:admin/adminIndex.html";
         }else {
-            model.addAttribute("logined",stu);
-            return "redirect:user/userIndex.html";
+            LoginedUser stu = bo.login(name, password);
+            if (stu == null) {
+                return "redirect:index.html";
+            } else {
+                model.addAttribute("logined", stu);
+                model.addAttribute("admin",false);
+                return "redirect:user/userIndex.html";
+            }
         }
+    }
+
+    @RequestMapping("logout")
+    public String logout(HttpServletRequest request){
+        //TODO
+        return "";
     }
 
     @RequestMapping("forgetPwd")
