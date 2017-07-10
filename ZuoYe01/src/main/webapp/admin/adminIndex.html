@@ -24,12 +24,29 @@
 <body>
 <button id="add-btn" type="button" class="btn btn-warning action-btn">添加学生信息</button>
 <button id="del-btn" type="button" class="btn btn-danger action-btn">删除学生信息</button>
+<a id="export-btn" href="export.do" class="btn btn-warning action-btn">导出学生信息</a>
 <div class="container">
     <div id="search-div" class="row">
+        <div class="col-lg-6">
         <form id="search-form">
             <input name="name" placeholder="输入要查询的姓名关键字">
             <button id="search-btn" type="button">查询</button>
         </form>
+        </div>
+        <!-- 使用表单提交上传文件 -->
+        <!--<div class="col-lg-6 text-right">
+            <form id="upload-form" class="form-inline" action="import.do" method="post" enctype="multipart/form-data">
+                <input id="excel-file" class="form-control" name="excelFile" type="file" />
+                <button>上传</button>
+            </form>
+        </div>-->
+        <!-- 使用ajax上传文件 -->
+        <div class="col-lg-6 text-right">
+            <form id="upload-form" class="form-inline">
+                <input id="excel-file" class="form-control" name="excelFile" type="file" />
+                <button type="button" id="upload-btn">上传</button>
+            </form>
+        </div>
     </div>
     <tr id="list-div">
         <table class="table">
@@ -215,6 +232,23 @@
         alert(typeof map[0]);
         alert(typeof map[1]);
         //TODO
+    });
+
+    $('#upload-btn').on('click',function () {
+        var formData = new FormData($('#upload-form')[0]);
+        $.ajax({
+            url:'import.do',
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false
+        }).then(function (msg) {
+            alert(msg.msg);
+        },function (msg) {
+            alert(msg.msg);
+        });
     });
 
     var saveDialog = $('#save-dialog').dialog({

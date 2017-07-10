@@ -2,9 +2,15 @@ package org.forten.si.bo;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.HtmlEmail;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.forten.si.dao.HibernateDao;
 import org.forten.si.dto.*;
 import org.forten.si.entity.Student;
+import org.forten.utils.common.DateUtil;
 import org.forten.utils.common.NumberUtil;
 import org.forten.utils.common.StringUtil;
 import org.forten.utils.security.SHA1Util;
@@ -193,6 +199,55 @@ public class StudentBo {
         }else {
             return true;
         }
+    }
+
+    @Transactional
+    public Workbook doExportAll(){
+        String hql = "SELECT new org.forten.si.dto.Student4Export(name,gender,birthday,address) FROM Student ORDER BY id ";
+        List<Student4Export> list = dao.findBy(hql,new HashMap<>());
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("学生信息");
+        Row rowHead = sheet.createRow(0);
+        rowHead.createCell(0).setCellValue("姓名");
+        rowHead.createCell(1).setCellValue("性别");
+        rowHead.createCell(2).setCellValue("生日");
+        rowHead.createCell(3).setCellValue("年龄");
+        rowHead.createCell(4).setCellValue("住址");
+
+        for (Student4Export stu4E:list) {
+            Row row = sheet.createRow(sheet.getLastRowNum()+1);
+            row.createCell(0).setCellValue(stu4E.getName());
+            row.createCell(1).setCellValue(stu4E.getGender());
+            row.createCell(2).setCellValue(stu4E.getBirthdayStr());
+            row.createCell(3).setCellValue(stu4E.getAge());
+            row.createCell(4).setCellValue(stu4E.getAddress());
+        }
+
+        return wb;
+    }
+
+    @Transactional
+    public void doImport(Workbook wb){
+        String hql = "SELECT max(id) FROM Student ";
+        int maxId = dao.findOneBy(hql,new HashMap<>(0));
+        Sheet sheet = wb.getSheetAt(0);
+        for(int i = 1; i<=sheet.getLastRowNum();i++){
+            Row row = sheet.getRow(i);
+            String name = row.getCell(0).getStringCellValue();
+            String gender = row.getCell(1).getStringCellValue();
+            String idCardNum = row.getCell(2).getStringCellValue();
+            String email = row.getCell(3).getStringCellValue();
+            String tel = row.getCell(4).getStringCellValue();
+            String address= row.getCell(5).getStringCellValue();
+            String birthday= row.getCell(6).getStringCellValue();
+            String eduBg= row.getCell(7).getStringCellValue();
+
+            Student4Save stu4S = new Student4Save(name,gender,idCardNum,email,tel,address, DateUtil.convertStringToDate(birthday,"yyyy-MM-dd"),eduBg);
+            Student stu = new Student(++maxId);
+            BeanPropertyUtil.copy(stu,stu4S);
+            dao.save(stu);
+        }
+
     }
 
     private String getRandomStr(){
