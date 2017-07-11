@@ -160,7 +160,7 @@
                     }
                     $.ajax({
                         url: "changePwd.do?oldPwd="+oldP+"&newPwd="+newP2,
-                        type: "GET",
+                        type: "GET"
                     }).then(function (msg) {
                         alert(msg.msg);
                         $('#form02')[0].reset();
